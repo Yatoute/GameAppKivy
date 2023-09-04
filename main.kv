@@ -1,0 +1,360 @@
+#:kivy 1.11.1
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+
+# Page d'accueil (liée à la classe HomePage définie dans le fichier main.py)
+<HomePage>:
+    name : 'Home'
+    # Structurer la page en deux grande colonnes à l'aide de l'outil GridLayout
+    GridLayout:
+        cols:2
+        size_hint: (1, 1)
+
+        # Première colone
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 0.005
+            space_x: self.size[0]/3
+            size_hint: (.8, 1)
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    source:'background0.PNG'
+                    size: root.width, root.height
+                    pos: self.pos
+
+        # Deuxième colonne
+        GridLayout:
+            #proprietés
+            cols:1
+            rows:4
+            size_hint: (1, 1)
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    source:'background.png'
+                    size: root.width, root.height
+                    pos: self.pos
+            # Insertion du widget label affichant le texte RIDDLING GAME
+            Label:
+                text: 'RIDDLING GAME'
+                size_hint: (1, 0.1)
+                font_name : 'Arial'
+                font_size: self.size[0]* 0.08
+                color: 1,0,1,1
+                canvas.before:
+                    Color:
+                        rgba:  0, 0, 1, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+            # Insertion d'une image avec le widget BoxLayout
+            BoxLayout:
+                canvas.before:
+                    Rectangle:
+                        source: 'jeu.jpg'
+                        size: self.size
+                        pos: self.pos
+                size_hint: (1, 0.7)
+                pos_hint: {'x':0, 'y':0}
+           
+            # Insertion des trois touches de Level avec l'outil de disposition GridLayout
+            GridLayout:
+                cols: 3
+                rows: 1
+                size_hint: (1, 0.1)
+                
+                # Fais appel à la méthode level() et utilise la méthode current de la classe ScreenManager pour transiter à la page du jeu
+                Button:
+                    id:lavel
+                    size_hint: (1/3, .1/3)
+                    font_size: self.size[0]/5
+                    text: "Level 1"
+                    on_press:
+                        root.level(1)
+                        app.root.current='GuessNumber'
+                        
+                Button:
+                    size_hint: (1/3, .1/3)
+                    font_size: self.size[0]/5
+                    text: "Level 2"
+                    on_press: 
+                        root.level(2)
+                        app.root.current='GuessNumber'
+                        
+            
+                Button:
+                    size_hint: (1/3, .1/3)
+                    font_size: self.size[0]/5
+                    text: "Level 3"
+                    on_press: 
+                        root.level(3)
+                        app.root.current='GuessNumber'
+
+            # Insertion d'un widget Label donnant une instruction au joueur
+            Label:
+                size_hint: (1, 0.1)
+                text: "Click on a level to continue"
+                font_size: self.size[0]* 0.05
+                background_color : 0, 1, 1, 1
+                
+
+# Page du jeu (liée à la classe GuessNumber définie dans le fichier main.py)
+<GuessNumber>:
+    name : 'GuessNumber'
+    # Structurer la page en deux grande colonnes à l'aide de l'outil GridLayout
+    GridLayout:
+        cols: 2
+        size_hint: (1, 1)
+
+        #Première colonne (contient juste une image de fond d'écran)
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 0.005
+            space_x: self.size[0]/3
+            size_hint: (.8, 1)
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    source:'background0.PNG'
+                    size: root.width, root.height
+                    pos: self.pos
+
+        # Deuxième colonnes
+        GridLayout:
+            cols: 3
+            size_hint: (1, 1)
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                Rectangle:
+                    source:'background.png'
+                    size: root.width, root.height
+                    pos: self.pos
+            # Widget BoxLayout (une petite colonne vide)
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: (0.2, 1)
+
+            # Interface du jeu
+            BoxLayout:
+                #id: main_win
+                orientation: "vertical"
+                space_x: self.size[0]/2
+                size_hint: (1, 1)
+                
+                # Insertion du widget Label qui affiche le chronomètrage
+                Label:
+                    id:temps_label
+                    pos_hint: {"x": 0, "top": 1}
+                    size_hint: (1, 0.2)
+                    font_size: self.size[0]* 0.08
+                    color: 1,0,1,1
+                    canvas.before:
+                        Color:
+                            rgba:  0, 0, 1, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                # Insertion d'un widget qui affiche le statut du nombre entrée par le joueur 
+                Label:
+                    id:resultat_label
+                    pos_hint: {"x": 0, "top": 1}
+                    size_hint: (1, 0.2)
+                    font_size: self.size[0]* 0.06
+                    canvas.before:
+                        Color:
+                            rgba:  0, 0, 1, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                # Insertion du widget TextInput qui reçoit le nombre entré par le joueur
+                TextInput:
+                    size_hint: (1, .2)
+                    id : input
+                    multiline: False
+                    on_text: root.on_text(input,input.text)
+
+                # Insertion du bouton Check (la méthode check_number() est appelée à chaque fois qu'on clique sur cette touche)
+                Button:
+                    size_hint: (1, .2)
+                    text: "Check"
+                    font_size: self.size[0]* 0.05
+                    background_color: (157/255,50/255,157/255,1)
+                    on_press: root.check_number()
+
+                # Structuration du clavier numérique avec l'outil GridLayout(6 lignes,3 cols)
+                GridLayout:
+                    cols: 3
+                    rows: 6
+                    size_hint: (1, 1.5)
+
+                    #ROWS
+                    
+                
+                    # Touche a (fait appel à la méthode a() définie dans le fichier main.py)
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "a"
+                        on_press: root.a()
+
+                    # Touche de recherche dichotomique (fait appel à la méthode c())
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        background_color: (50/255,157/255,157/255,1)
+                        text: "Rdic"
+                        on_press: root.c()
+
+                    # Touche b (fait appel à la méthode b())
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "b"
+                        on_press: root.b()
+                    
+                    # Touche 7
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "7"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                    
+                    # Touche 8
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "8"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                     
+                    # Touche 9
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "9"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+            
+                    # Touche 4
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "4"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                    
+                    # Touche 5
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "5"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                    
+                    # Touche 6
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "6"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                
+                
+                    # Touche 1
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "1"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                    
+                    # Touche 2
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "2"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                    
+                    # Touche 3
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "3"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+
+                    # Touche SUP ALL (fait appel à la méthode clear())
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/7
+                        text: "SUP ALL"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: root.clear()
+                    
+                    # Touche 0
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/5
+                        text: "0"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: input.text += self.text
+                    
+                    # Touche SUP (fait appel à la méthode remove())
+                    Button:
+                        size_hint: (1/3, .2)
+                        font_size: self.size[0]/7
+                        text: "SUP"
+                        background_color: (157/255,157/255,157/255,1)
+                        on_press: root.remove()
+
+                    # Un Label d'espace vide 
+                    Label:
+                        size_hint: (1/3, .05)
+
+                # Disposition des touches Back Home, End Game et Start Game
+                GridLayout:
+                    cols: 3
+                    size_hint: (1, 0.3)
+                    
+                    # Bouton Back Home (fait à la méthode resetGame et utilise la proprieté current de ScreenManager pour revenir à la page d'accueil)
+                    Button:
+                        size_hint: (1/3, .15)
+                        font_size: self.size[0]/7
+                        background_color: (50/255,157/255,157/255,1)
+                        text: "Back Home"
+                        on_press:
+                            root.resetGame()
+                            app.root.current='Home'
+                    # Bouton End Game (fait appel à la méthode EndGame définie dans...)
+                    Button:
+                        size_hint: (1/3, .15)
+                        font_size: self.size[0]/7
+                        background_color: (50/255,157/255,157/255,1)
+                        text: "End Game"
+                        on_press: root.EndGame()
+
+                    # Bouton Start Game (fait appel à la méthode StartGame )                 
+                    Button:
+                        size_hint: (1/3, .15)
+                        font_size: self.size[0]/7
+                        background_color: (50/255,157/255,157/255,1)
+                        text: "Start Game"
+                        on_press: root.startGame()
+
+                    # Un espace vide en pied de page
+                    Label:
+                        size_hint: (0.2, .05)
+            # Une petite colone vide
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: (0.2, 1)
+          
